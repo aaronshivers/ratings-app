@@ -17,6 +17,13 @@ app.use(function(err, req, res, next) {
   res.status(500).send('Something broke!')
 })
 
+app.use((err, req, res, next) => {
+  res.status(500).render('error', {
+    statusCode: '500',
+    errorMessage: err.message
+  })
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${ PORT }.`)
 })

@@ -20,11 +20,11 @@
   "homepage": "https://github.com/aaronshivers/ratings-app#readme",
   "dependencies": {
     "dotenv": "^6.2.0",
+    "expect": "^24.1.0",
     "express": "^4.16.4",
     "mongoose": "^5.4.15"
   },
   "devDependencies": {
-    "expect": "^24.1.0",
     "mocha": "^6.0.1",
     "supertest": "^3.4.2"
   }
