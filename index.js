@@ -9,3 +9,5 @@ app.get('/', (req, res) => res.send('Ratings App'))
 app.listen(PORT, () => {
   console.log(`Server listening on port ${ PORT }.`)
 })
+
+module.exports = { app }
