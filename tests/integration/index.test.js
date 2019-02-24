@@ -7,4 +7,10 @@ describe('index', () => {
       .get('/')
       .expect(200)
   })
+
+  it('should return 404 if page not found', () => {
+    request(app)
+      .get('/asdfklj2134jhasdf')
+      .expect(404)
+  })
 })
