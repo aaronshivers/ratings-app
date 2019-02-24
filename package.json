@@ -1,0 +1,27 @@
+{
+  "name": "ratings-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "export NODE_ENV=development && node index.js",
+    "test": "export NODE_ENV=test && mocha -t 50000 tests/**/*/test.js",
+    "test-watch": "nodemon --exec 'npm test'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronshivers/ratings-app.git"
+  },
+  "author": "aaron shivers",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaronshivers/ratings-app/issues"
+  },
+  "homepage": "https://github.com/aaronshivers/ratings-app#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "express": "^4.16.4",
+    "mocha": "^6.0.1",
+    "mongoose": "^5.4.15"
+  }
+}
