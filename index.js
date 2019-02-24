@@ -1,13 +1,16 @@
 require('dotenv').config()
 
 const express = require('express')
+const mongoose = require('./db/mongoose')
 
 const index = require('./routes/index')
+const items = require('./routes/items')
 
 const app = express()
 const { PORT } = process.env
 
 app.use('/', index)
+app.use('/items', items)
 
 app.use(function(err, req, res, next) {
   console.error(err.message)
