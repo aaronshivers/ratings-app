@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { ObjectId } = require('mongodb')
 const { Item } = require('../models/items')
+const auth = require('../middleware/auth')
 
 // GET /
 router.get('/', async (req, res) => {
@@ -27,6 +28,26 @@ router.get('/:id', async (req, res) => {
 
   // return found item
   res.send(item)
+})
+
+// POST /
+router.post('/', auth, async (req, res) => {
+  // const { name, rating } = req.body
+
+  // reject if id is invalid
+  // if (!ObjectId.isValid(id)) return res.status(404).send('Invalid ObjectId')
+
+  // reject if id is not in the DB
+  // if (!item) return res.status(404).send('Id Not Found')
+
+  // create item
+  // const item = { name, rating }
+
+  // save item
+  // await item.save()
+
+  // return found item
+  // res.send(item)
 })
 
 module.exports = router

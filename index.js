@@ -5,12 +5,14 @@ const mongoose = require('./db/mongoose')
 
 const index = require('./routes/index')
 const items = require('./routes/items')
+const users = require('./routes/users')
 
 const app = express()
 const { PORT } = process.env
 
 app.use('/', index)
 app.use('/items', items)
+app.use('/users', users)
 
 app.use(function(err, req, res, next) {
   console.error(err.message)

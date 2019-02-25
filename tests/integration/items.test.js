@@ -64,4 +64,13 @@ describe('/items', () => {
         .expect(200)
     })
   })
+
+  describe('POST /', () => {
+
+    it('should return 401 if user not logged in', async () => {
+      await request(app)
+        .post(`/items`)
+        .expect(401)
+    })
+  })
 })
