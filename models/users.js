@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const moment = require('moment')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const Joi = require('joi')
 
 const Schema = mongoose.Schema
 
@@ -57,6 +58,19 @@ userSchema.methods.createAuthToken = function () {
   return jwt.sign(payload, secret, options)
 }
 
+const userValidator = req => {
+  const regex = /((?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)).{8,100}/
+
+  const schema = Joi.object().keys({
+    email: Joi.string().min(7).max(255).email().required(),
+    password: Joi.string().min(8).max(100).regex(regex).required().error(() => {
+      return `Password must contain 8-100 characters, with at least one 
+      lowercase letter, one uppercase letter, one number, and one special character.`
+    })
+  })
+  return Joi.validate(req, schema)
+}
+
 const User = mongoose.model('User', userSchema)
 
-module.exports = { User }
+module.exports = { User, userValidator }

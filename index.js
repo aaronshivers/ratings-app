@@ -10,6 +10,7 @@ const users = require('./routes/users')
 const app = express()
 const { PORT } = process.env
 
+app.use(express.json())
 app.use('/', index)
 app.use('/items', items)
 app.use('/users', users)

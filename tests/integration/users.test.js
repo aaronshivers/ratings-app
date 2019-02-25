@@ -4,6 +4,8 @@ const { ObjectId } = require('mongodb')
 const { app } = require('../../index')
 const { User } = require('../../models/users')
 
+// const mochaAsync = fn => done => fn.call().then(done, err => done(err))
+
 describe('/users', () => {
 
   const users = [
@@ -65,12 +67,58 @@ describe('/users', () => {
     })
   })
 
-  // describe('POST /', () => {
+  describe('POST /', () => {
 
-  //   it('should return 401 if user not logged in', async () => {
-  //     await request(app)
-  //       .post(`/users`)
-  //       .expect(401)
-  //   })
-  // })
+    it('should return 400 if user info is invalid', async () => {
+      await request(app)
+        .post(`/users`)
+        .send({ email: 'asdf.234.dusdf', password: 'sdfjk' })
+        .expect(400)
+    })
+
+    it('should return 400 if email is less than 7 characters', async () => {
+      await request(app)
+        .post('/users')
+        .send({ email: 'a@a.uk', password: 'asdfASDF1234!@#$' })
+        .expect(400)
+    })
+
+    it('should return 400 if email is greater than 50 characters', async () => {
+      const email = new Array(100).join('a').concat(['@a.com'])
+      await request(app)
+        .post('/users')
+        .send({ email: email, password: 'asdfASDF1234!@#$' })
+        .expect(400)
+    })
+
+    it('should return 400 if password is less than 8 characters', async () => {
+      await request(app)
+        .post('/users')
+        .send({ email: 'user3@test.com', password: 'aA1!' })
+        .expect(400)
+    })
+
+    it('should return 400 if password is greater than 100 characters', async () => {
+      const pass = new Array(101).join('aA1!')
+      await request(app)
+        .post('/users')
+        .send({ email: 'user3@test.com', password: pass })
+        .expect(400)
+    })
+
+    it('should save the user if it is valid', async () => {
+      const user = {
+        email: 'user3@test.com',
+        password: 'asdfASDF1234!@#$'
+      }
+
+      await request(app)
+        .post('/users')
+        .send(user)
+        .expect(200)      
+
+      const foundUser = await User.findOne({ email: user.email })
+      expect(foundUser).not.toBeNull()
+    })
+  })
 })

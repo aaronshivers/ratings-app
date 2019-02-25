@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const { ObjectId } = require('mongodb')
-const { User } = require('../models/users')
+const { User, userValidator } = require('../models/users')
 const auth = require('../middleware/auth')
+const validate = require('../middleware/validate')
 
 // GET /
 router.get('/', async (req, res) => {
@@ -31,23 +32,17 @@ router.get('/:id', async (req, res) => {
 })
 
 // POST /
-router.post('/', auth, async (req, res) => {
-  // const { name, rating } = req.body
-
-  // reject if id is invalid
-  // if (!ObjectId.isValid(id)) return res.status(404).send('Invalid ObjectId')
-
-  // reject if id is not in the DB
-  // if (!user) return res.status(404).send('Id Not Found')
+router.post('/', validate(userValidator), async (req, res) => {
+  const { email, password } = req.body
 
   // create user
-  // const user = { name, rating }
+  const user = await new User({ email, password })
 
   // save user
-  // await user.save()
+  await user.save()
 
   // return found user
-  // res.send(user)
+  res.send(user)
 })
 
 module.exports = router
