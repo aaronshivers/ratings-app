@@ -15,19 +15,19 @@ router.get('/', async (req, res) => {
 
 // GET /:id
 router.get('/:id', async (req, res) => {
-  // const { id } = req.params
+  const { id } = req.params
 
-  // // reject if id is invalid
-  // if (!ObjectId.isValid(id)) return res.status(404).send('Invalid ObjectId')
+  // reject if id is invalid
+  if (!ObjectId.isValid(id)) return res.status(404).send('Invalid ObjectId')
 
-  // // find user by id
-  // const user = await User.findById(id)
+  // find user by id
+  const user = await User.findById(id)
 
-  // // reject if id is not in the DB
-  // if (!user) return res.status(404).send('Id Not Found')
+  // reject if id is not in the DB
+  if (!user) return res.status(404).send('Id Not Found')
 
-  // // return found user
-  // res.send(user)
+  // return found user
+  res.send(user)
 })
 
 // POST /

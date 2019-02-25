@@ -43,27 +43,27 @@ describe('/users', () => {
       })
   })
 
-  // describe('GET /users/:id', () => {
-  //   it('should return 404 if invalid Id is passed', async () => {
-  //     await request(app)
-  //       .get('/users/1234')
-  //       .expect(404)
-  //   })
+  describe('GET /users/:id', () => {
+    it('should return 404 if invalid Id is passed', async () => {
+      await request(app)
+        .get('/users/1234')
+        .expect(404)
+    })
 
-  //   it('should return 404 if Id is not in the DB', async () => {
-  //     const id = new ObjectId()
+    it('should return 404 if Id is not in the DB', async () => {
+      const id = new ObjectId()
 
-  //     await request(app)
-  //       .get(`/users/${ id }`)
-  //       .expect(404)
-  //   })
+      await request(app)
+        .get(`/users/${ id }`)
+        .expect(404)
+    })
 
-  //   it('should return specified user', async () => {
-  //     await request(app)
-  //       .get(`/users/${ users[0]._id }`)
-  //       .expect(200)
-  //   })
-  // })
+    it('should return specified user', async () => {
+      await request(app)
+        .get(`/users/${ users[0]._id }`)
+        .expect(200)
+    })
+  })
 
   // describe('POST /', () => {
 
