@@ -3,6 +3,7 @@ const expect = require('expect')
 const { ObjectId } = require('mongodb')
 const { app } = require('../../index')
 const { Item } = require('../../models/items')
+const { User } = require('../../models/users')
 
 describe('/items', () => {
 
@@ -70,7 +71,58 @@ describe('/items', () => {
     it('should return 401 if user not logged in', async () => {
       await request(app)
         .post(`/items`)
+        .send({ name: 'item3', rating: 2 })
         .expect(401)
+    })
+
+    it('should return 400 if data is invalid', async () => {
+      const token = new User().createAuthToken()
+
+      await request(app)
+        .post('/items')
+        .set('x-auth-token', token)
+        .send({ name: 'item3', rating: 'asdf' })
+        .expect(400)
+    })
+
+    it('should return 400 if item already exists', async () => {
+      const token = new User().createAuthToken()
+
+      await request(app)
+        .post('/items')
+        .set('x-auth-token', token)
+        .send({ name: items[0].name, rating: items[0].rating })
+        .expect(400)
+
+      const foundItems = await Item.find()
+      expect(foundItems.length).toBe(2)
+    })
+
+    it('should save the item if data is valid', async () => {
+      const token = new User().createAuthToken()
+
+      await request(app)
+        .post('/items')
+        .set('x-auth-token', token)
+        .send({ name: 'item3', rating: 4 })
+        .expect(200)
+
+      const foundItem = await Item.find({ name: 'item3', rating: 4 })
+      expect(foundItem).toBeTruthy()
+    })
+
+    it('should return the item if data is valid', async () => {
+      const token = new User().createAuthToken()
+
+      await request(app)
+        .post('/items')
+        .set('x-auth-token', token)
+        .send({ name: 'item3', rating: 4 })
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toHaveProperty('name', 'item3')
+          expect(res.body).toHaveProperty('rating', 4)
+        })
     })
   })
 })

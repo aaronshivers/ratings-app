@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const winston = require('winston')
 
 const { MONGO_USER, MONGO_PASS, MONGO_CLUSTER, NODE_ENV } = process.env
 const encodedpass = encodeURIComponent(MONGO_PASS)
@@ -17,6 +18,6 @@ const options = {
 }
 
 mongoose.connect(uri, options)
-  .then(() => console.log(`Connected to ${ NODE_ENV } database.`))
+  .then(() => winston.info(`Connected to ${ NODE_ENV } database.`))
 
 module.exports = { mongoose }

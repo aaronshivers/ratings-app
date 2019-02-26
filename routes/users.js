@@ -7,42 +7,74 @@ const validate = require('../middleware/validate')
 
 // GET /
 router.get('/', async (req, res) => {
-  const users = await User.find()
+  try {
+    // find users
+    const users = await User.find()
 
-  if (users.length === 0) return res.status(404).send('No users found.')
+    // return if no users found
+    if (users.length === 0) return res.status(404).send('No users found.')
 
-  res.send(users)
+    // send errors
+    res.send(users)
+  } catch (error) {
+    res.send(error.message)
+  }
 })
 
 // GET /:id
 router.get('/:id', async (req, res) => {
   const { id } = req.params
 
-  // reject if id is invalid
-  if (!ObjectId.isValid(id)) return res.status(404).send('Invalid ObjectId')
+  try {
+    // reject if id is invalid
+    if (!ObjectId.isValid(id)) return res.status(404).send('Invalid ObjectId')
 
-  // find user by id
-  const user = await User.findById(id)
+    // find user by id
+    const user = await User.findById(id)
 
-  // reject if id is not in the DB
-  if (!user) return res.status(404).send('Id Not Found')
+    // reject if id is not in the DB
+    if (!user) return res.status(404).send('Id Not Found')
 
-  // return found user
-  res.send(user)
+    // return found user
+    res.send(user)
+  } catch (error) {
+    res.send(error.message)
+  }
 })
 
 // POST /
 router.post('/', validate(userValidator), async (req, res) => {
   const { email, password } = req.body
 
-  // create user
-  const user = await new User({ email, password })
+  try {
+    // check db for existing user
+    const existingUser = await User.findOne({ email })
+    if (existingUser) return res.status(400).send('User already registered.')
 
-  // save user
-  await user.save()
+    // create user
+    const user = await new User({ email, password })
 
-  // return found user
-  res.send(user)
+    // save user
+    await user.save()
+
+    // Get auth token
+    const token = await user.createAuthToken()
+
+    // set header and return user info
+    res.header('x-auth-token', token).send({ email })
+  } catch (error) {
+    res.send(error.message)
+  }
+
+})
+
+// DELETE /:id
+router.delete('/', async (req, res) => {
+  try {
+    
+  } catch (error) {
+    res.send(error.message)
+  }
 })
 
 module.exports = router

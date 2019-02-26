@@ -4,8 +4,6 @@ const { ObjectId } = require('mongodb')
 const { app } = require('../../index')
 const { User } = require('../../models/users')
 
-// const mochaAsync = fn => done => fn.call().then(done, err => done(err))
-
 describe('/users', () => {
 
   const users = [
@@ -103,6 +101,13 @@ describe('/users', () => {
       await request(app)
         .post('/users')
         .send({ email: 'user3@test.com', password: pass })
+        .expect(400)
+    })
+
+    it('should return 400 if user already exists', async () => {
+      await request(app)
+        .post('/users')
+        .send({ email: users[0].email, password: users[0].password })
         .expect(400)
     })
 

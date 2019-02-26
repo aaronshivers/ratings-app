@@ -2,6 +2,26 @@ require('dotenv').config()
 
 const express = require('express')
 const mongoose = require('./db/mongoose')
+require('express-async-errors')
+const winston = require('winston')
+// require('winston-mongodb')
+
+
+// Handle uncaught exceptions
+winston.exceptions.handle(new winston.transports.File({ filename: 'uncaughtExceptions.log', level: 'error'}))
+
+//Handle unhandled rejections
+process.on('unhandledRejection', exception => {
+  throw exception.message
+})
+
+// Error Logging
+winston.add(new winston.transports.Console({ colorize: true, prettyPrint: true }))
+// winston.add(new winston.transports.Console({ format: winston.format.simple() }))
+winston.add(new winston.transports.File({ filename: 'logfile.log', level: 'info' }))
+// winston.add(new winston.transports.MongoDB ({ db: url, level: 'info' }))
+
+
 
 const index = require('./routes/index')
 const items = require('./routes/items')
