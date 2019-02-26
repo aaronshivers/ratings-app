@@ -89,4 +89,34 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
+// PATCH /:id
+router.patch('/:id', [auth, validate(validateItem)], async (req, res) => {
+  const { id } = req.params
+  const { name, rating } = req.body
+
+  try {
+
+    // reject if id is invalid
+    if (!ObjectId.isValid(id)) return res.status(400).send('Invalid ObjectId')
+
+    // find item by id
+    const item = await Item.findById(id)
+
+    // reject if id is not id db
+    if (!item) return res.status(404).send('Item Not Found')
+
+    // create update
+    const update = { name, rating }
+    const options = { runValidators: true, new: true }
+
+    // update Item
+    const updatedItem = await Item.findByIdAndUpdate(id, update, options)
+  
+    // return updated item
+    res.send(updatedItem)
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 module.exports = router

@@ -7,20 +7,19 @@ const { User } = require('../../models/users')
 
 describe('/items', () => {
 
+  const token = new User().createAuthToken()
+
   const items = [
     { _id: new ObjectId(), name: 'item0', rating: 4 },
     { _id: new ObjectId(), name: 'item1', rating: 5 }
   ]
 
   beforeEach(async () => {
+    await Item.deleteMany()
     const item0 = new Item(items[0])
     const item1 = new Item(items[1])
     await item0.save()
     await item1.save()
-  })
-
-  afterEach(async () => {
-    await Item.deleteMany()
   })
 
   describe('GET /items', () => {
@@ -76,8 +75,7 @@ describe('/items', () => {
     })
 
     it('should return 400 if data is invalid', async () => {
-      const token = new User().createAuthToken()
-
+      
       await request(app)
         .post('/items')
         .set('x-auth-token', token)
@@ -86,8 +84,7 @@ describe('/items', () => {
     })
 
     it('should return 400 if item already exists', async () => {
-      const token = new User().createAuthToken()
-
+      
       await request(app)
         .post('/items')
         .set('x-auth-token', token)
@@ -99,8 +96,7 @@ describe('/items', () => {
     })
 
     it('should save the item if data is valid', async () => {
-      const token = new User().createAuthToken()
-
+      
       await request(app)
         .post('/items')
         .set('x-auth-token', token)
@@ -112,8 +108,7 @@ describe('/items', () => {
     })
 
     it('should return the item if data is valid', async () => {
-      const token = new User().createAuthToken()
-
+      
       await request(app)
         .post('/items')
         .set('x-auth-token', token)
@@ -138,8 +133,7 @@ describe('/items', () => {
     })
 
     it('should respond 400 if id is invalid', async () => {
-      const token = new User().createAuthToken()
-
+      
       await request(app)
         .delete(`/items/3214`)
         .set('x-auth-token', token)
@@ -150,8 +144,7 @@ describe('/items', () => {
     })
 
     it('should respond 404 if id is not in DB', async () => {
-      const token = new User().createAuthToken()
-
+      
       await request(app)
         .delete(`/items/${ new ObjectId() }`)
         .set('x-auth-token', token)
@@ -162,8 +155,7 @@ describe('/items', () => {
     })
 
     it('should remove item from DB', async () => {
-      const token = new User().createAuthToken()
-
+      
       await request(app)
         .delete(`/items/${ items[0]._id }`)
         .set('x-auth-token', token)
@@ -174,8 +166,7 @@ describe('/items', () => {
     })
 
     it('should return the deleted item', async () => {
-      const token = new User().createAuthToken()
-
+      
       await request(app)
         .delete(`/items/${ items[0]._id }`)
         .set('x-auth-token', token)
@@ -183,6 +174,60 @@ describe('/items', () => {
         .expect(res => {
           expect(res.body).toHaveProperty('name', items[0].name)
           expect(res.body).toHaveProperty('rating', items[0].rating)
+        })
+    })
+  })
+
+  describe('PATCH /:id', () => {
+
+    it('should return 401 if user not logged in', async () => {
+      await request(app)
+        .patch(`/items/${ items[0]._id }`)
+        .send({ name: 'patched item', rating: 4 })
+        .expect(401)
+    })
+
+    it('should return 400 if id is invalid', async () => {
+      await request(app)
+        .patch(`/items/1234`)
+        .set('x-auth-token', token)
+        .send({ name: 'patched item', rating: 4 })
+        .expect(400)
+    })
+
+    it('should return 404 if Id is not in DB', async () => {
+      await request(app)
+        .patch(`/items/${ new ObjectId() }`)
+        .set('x-auth-token', token)
+        .send({ name: 'patched item', rating: 4 })
+        .expect(404)
+    })
+
+    it('should return 400 if data is invalid', async () => {
+      await request(app)
+        .patch(`/items/${ items[0]._id }`)
+        .set('x-auth-token', token)
+        .send({ name: 1234, rating: 'sdfs' })
+        .expect(400)
+    })
+
+    it('should save the update if data is valid', async () => {
+      await request(app)
+        .patch(`/items/${ items[0]._id }`)
+        .set('x-auth-token', token)
+        .send({ name: 'patched item', rating: 4 })
+        .expect(200)
+    })
+
+    it('should return update if data is valid', async () => {
+      await request(app)
+        .patch(`/items/${ items[0]._id }`)
+        .set('x-auth-token', token)
+        .send({ name: 'patched item', rating: 4 })
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toHaveProperty('name', 'patched item')
+          expect(res.body).toHaveProperty('rating', 4)
         })
     })
   })

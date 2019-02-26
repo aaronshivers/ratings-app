@@ -8,7 +8,8 @@ const winston = require('winston')
 
 
 // Handle uncaught exceptions
-winston.exceptions.handle(new winston.transports.File({ filename: 'uncaughtExceptions.log', level: 'error'}))
+// winston.exceptions.handle(new winston.transports.File({ filename: 'uncaughtExceptions.log', level: 'error'}))
+winston.exceptions.handle(new winston.transports.Console({ colorize: true, prettyPrint: true }))
 
 //Handle unhandled rejections
 process.on('unhandledRejection', exception => {
