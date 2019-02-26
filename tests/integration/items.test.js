@@ -125,4 +125,65 @@ describe('/items', () => {
         })
     })
   })
+
+  describe('DELETE /:id', () => {
+
+    it('should respond 401 if user not logged in', async () => {
+      await request(app)
+        .delete(`/items/${ items[0]._id }`)
+        .expect(401)
+
+      const foundItem = await Item.findById(items[0]._id)
+      expect(foundItem).toBeTruthy()
+    })
+
+    it('should respond 400 if id is invalid', async () => {
+      const token = new User().createAuthToken()
+
+      await request(app)
+        .delete(`/items/3214`)
+        .set('x-auth-token', token)
+        .expect(400)
+
+      const foundItems = await Item.find()
+      expect(foundItems.length).toBe(2)
+    })
+
+    it('should respond 404 if id is not in DB', async () => {
+      const token = new User().createAuthToken()
+
+      await request(app)
+        .delete(`/items/${ new ObjectId() }`)
+        .set('x-auth-token', token)
+        .expect(404)
+
+      const foundItems = await Item.find()
+      expect(foundItems.length).toBe(2)
+    })
+
+    it('should remove item from DB', async () => {
+      const token = new User().createAuthToken()
+
+      await request(app)
+        .delete(`/items/${ items[0]._id }`)
+        .set('x-auth-token', token)
+        .expect(200)
+
+      const foundItems = await Item.find()
+      expect(foundItems.length).toBe(1)
+    })
+
+    it('should return the deleted item', async () => {
+      const token = new User().createAuthToken()
+
+      await request(app)
+        .delete(`/items/${ items[0]._id }`)
+        .set('x-auth-token', token)
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toHaveProperty('name', items[0].name)
+          expect(res.body).toHaveProperty('rating', items[0].rating)
+        })
+    })
+  })
 })

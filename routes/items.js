@@ -64,4 +64,29 @@ router.post('/', [auth, validate(validateItem)], async (req, res) => {
   }
 })
 
+// DELETE /:id
+router.delete('/:id', auth, async (req, res) => {
+  const { id } = req.params
+
+  try {
+    // reject if id is invalid
+    if (!ObjectId.isValid(id)) return res.status(400).send('Invalid ObjectId')
+
+    // find item by id
+    const item = await Item.findById(id)
+
+    // reject if id not found
+    if (!item) return res.status(404).send('Item Not Found')
+
+    // delete item by id
+    const deletedItem = await Item.findByIdAndDelete(id)
+
+    // return deleted item
+    res.send(deletedItem)
+
+  } catch (error) {
+    console.log(error.message)
+  }
+})
+
 module.exports = router
